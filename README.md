@@ -14,6 +14,13 @@ Then click the bookmark to clip a page of interest. This will clip the page as a
 
 Alternatively, you can directly run the [quarto-web-clipper.js](quarto-web-clipper.js) code in your browser console to clip the page as a Quarto document.
 
+## Demo
+
+Here are a few websites you can try running the bookmarklet on: 
+- https://posit.co/blog/five-highlights-from-posit-conf-2024/
+- https://meghan.rbind.io/blog/2024-08-14-quarto-templates/
+- https://www.r-consortium.org/blog/2024/08/26/news-from-r-submissions-working-group-pilot-3-successfully-reviewed-by-fda
+
 ## Troubleshooting
 
 Ensure that you have Automatic Downloads set to “On” in your browser settings for the webpage of interest. 
