@@ -8,11 +8,9 @@
         default: Readability
     }]) => {
 
-        /* Optional folder name such as "Clippings/" */
-        const folder = "Clippings/";
-
-        /* Optional tags */
-        let tags = "clippings";
+        // optional full folder path to downloads folder
+        // const downloadsFolder = "/Users/USERNAME/Downloads/";
+        let tags = ["clippings"];
 
         /* Parse the site's meta keywords content into tags, if present */
         if (document.querySelector('meta[name="keywords" i]')) {
@@ -52,15 +50,7 @@
         } = new Readability(document.cloneNode(true)).parse();
 
         function getFileName(fileName) {
-            var userAgent = window.navigator.userAgent,
-                platform = window.navigator.platform,
-                windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'];
-
-            if (windowsPlatforms.indexOf(platform) !== -1) {
-                fileName = fileName.replace(':', '').replace(/[\/\\?%*|"<>]/g, '-');
-            } else {
-                fileName = fileName.replace(':', '').replace(/\//g, '-').replace(/\\/g, '-');
-            }
+            fileName = title.replace(/[:\/\\?%*|"<>]/g, '-');
             return fileName;
         }
         const fileName = getFileName(title);
@@ -121,29 +111,30 @@
 
         /* YAML front matter as tags render cleaner with special chars */
         const fileContent =
-            '---\n' +
-            'category: "[[Clippings]]"\n' +
-            'author: ' + authorBrackets + '\n' +
-            'title: "' + title + '"\n' +
-            'source: ' + document.URL + '\n' +
-            'clipped: ' + today + '\n' +
-            'published: ' + published + '\n' +
-            'topics: \n' +
-            'tags: [' + tags + ']\n' +
-            '---\n\n' +
-            markdownBody;
+`---
+title: "${title}"
+author: "${author || 'Unknown Author'}"
+date: "${today}"
+params: 
+    published_date: ${published ? `"${published}"` : ""}
+keywords: [${tags.map(tag => `"${tag}"`).join(', ')}]
+source: "${document.URL}"
+format: html
+---
+
+${markdownBody}`;
 
         const blob = new Blob([fileContent], { type: 'text/plain' });
         const fileUrl = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = fileUrl;
-        link.download = fileName + ".qmd";
+        link.download = `${fileName}.qmd`;
         document.body.appendChild(link);
         link.click();
+        console.log(`Downloaded ${link.download}`);
         document.body.removeChild(link);
-
-        // Open the file with VSCode
-        document.location.href = "vscode://file/" + encodeURIComponent(fileName + ".qmd");
-
+        // console.log(`Atttempting to point VSCode to ${downloadsFolder}${fileName}.qmd`);
+        // const vscode_href = `vscode://file/${downloadsFolder}${fileName}.qmd`;
+        // document.location.href = vscode_href;
     })
 })();
